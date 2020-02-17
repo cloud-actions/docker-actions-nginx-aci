@@ -6,7 +6,7 @@ RESOURCE_GROUP='200200-actions'
 LOCATION='eastus'
 RANDOM_STR='09c205'
 # [[ -z "$RANDOM_STR" ]] && RANDOM_STR=$(openssl rand -hex 3)
-REPOSITORY_NAME="hello-actions"
+REPOSITORY_NAME="hello-nginx"
 
 # create container registry
 REGISTRY_NAME="acr${RANDOM_STR}"
@@ -16,7 +16,7 @@ CONTAINER_IMAGE=$REPOSITORY_NAME:$(date +%y%m%d)-${GITHUB_SHA}
 az acr build -r $REGISTRY_NAME -t $CONTAINER_IMAGE --file Dockerfile .
 # create container instance
 REGISTRY_PASSWORD=$(az acr credential show -n $REGISTRY_NAME | jq -r .passwords[0].value)
-CONTAINER_NAME="aci${RANDOM_STR}"
+CONTAINER_NAME="aci-${REPOSITORY_NAME}-${RANDOM_STR}"
 az container create --resource-group $RESOURCE_GROUP --location $LOCATION \
     --name $CONTAINER_NAME \
     --image "${REGISTRY_NAME}.azurecr.io/${CONTAINER_IMAGE}" \
